@@ -1,10 +1,10 @@
 package service
 
-
 import (
+	"context"
 	"errors"
-	entity "user-service-api/internal/user/domain"
 	"user-service-api/internal/user/application/port"
+	entity "user-service-api/internal/user/domain"
 	"user-service-api/pkg/constant"
 )
 
@@ -20,12 +20,12 @@ func NewUserQueryService(ucr port.UserCommandRepositoryInterface, uqr port.UserQ
 	}
 }
 
-func (uqs *userQueryService) GetUserByID(id string) (entity.User, error) {
+func (uqs *userQueryService) GetUserByID(ctx context.Context, id string) (entity.User, error) {
 	if id == "" {
 		return entity.User{}, errors.New(constant.ERROR_ID_INVALID)
 	}
 
-	userEntity, errGetID := uqs.userQueryRepository.GetUserByID(id)
+	userEntity, errGetID := uqs.userQueryRepository.GetUserByID(ctx, id)
 	if errGetID != nil {
 		return entity.User{}, errors.New(constant.ERROR_DATA_EMPTY)
 	}

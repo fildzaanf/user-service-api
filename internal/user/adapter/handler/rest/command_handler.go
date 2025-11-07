@@ -21,6 +21,8 @@ func NewUserCommandHandler(ucs port.UserCommandServiceInterface) *userCommandHan
 
 // command
 func (uh *userCommandHandler) RegisterUser(c echo.Context) error {
+	ctx := c.Request().Context()
+
 	var userRequest UserRegisterRequest
 
 	if err := c.Bind(&userRequest); err != nil {
@@ -29,7 +31,7 @@ func (uh *userCommandHandler) RegisterUser(c echo.Context) error {
 
 	userEntity := UserRegisterRequestToEntity(userRequest)
 
-	registeredUser, err := uh.userCommandService.RegisterUser(userEntity)
+	registeredUser, err := uh.userCommandService.RegisterUser(ctx, userEntity)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, response.ErrorResponse(err.Error()))
 	}
@@ -40,13 +42,15 @@ func (uh *userCommandHandler) RegisterUser(c echo.Context) error {
 }
 
 func (uh *userCommandHandler) LoginUser(c echo.Context) error {
+	ctx := c.Request().Context()
+
 	var userRequest UserLoginRequest
 
 	if err := c.Bind(&userRequest); err != nil {
 		return c.JSON(http.StatusBadRequest, response.ErrorResponse(err.Error()))
 	}
 
-	loginUser, token, err := uh.userCommandService.LoginUser(userRequest.Email, userRequest.Password)
+	loginUser, token, err := uh.userCommandService.LoginUser(ctx, userRequest.Email, userRequest.Password)
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, response.ErrorResponse(err.Error()))
 	}

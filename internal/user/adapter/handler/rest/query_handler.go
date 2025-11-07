@@ -22,6 +22,8 @@ func NewUserQueryHandler(uqs port.UserQueryServiceInterface) *userQueryHandler {
 
 // query
 func (uh *userQueryHandler) GetUserByID(c echo.Context) error {
+	ctx := c.Request().Context()
+
 	userIDParam := c.Param("id")
 	if userIDParam == "" {
 		return c.JSON(http.StatusBadRequest, response.ErrorResponse("user id is required"))
@@ -40,7 +42,7 @@ func (uh *userQueryHandler) GetUserByID(c echo.Context) error {
 		return c.JSON(http.StatusForbidden, response.ErrorResponse("forbidden access"))
 	}
 
-	user, err := uh.userQueryService.GetUserByID(userIDParam)
+	user, err := uh.userQueryService.GetUserByID(ctx, userIDParam)
 	if err != nil {
 		return c.JSON(http.StatusNotFound, response.ErrorResponse("user not found"))
 	}

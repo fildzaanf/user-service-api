@@ -1,14 +1,16 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net"
 
 	"user-service-api/infrastructure/config"
 	"user-service-api/infrastructure/database"
-	usergrpc "user-service-api/internal/user/adapter/handler/grpc"
+	userGRPC "user-service-api/internal/user/adapter/handler/grpc"
 	"user-service-api/pkg/middleware"
 
+	"github.com/common-nighthawk/go-figure"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -16,11 +18,10 @@ import (
 )
 
 func main() {
-
 	middleware.InitLogger()
 
 	godotenv.Load()
-	config, err := config.LoadConfig()
+	cfg, err := config.LoadConfig()
 	if err != nil {
 		logrus.Fatalf("[ERROR] failed to load configuration: %v", err)
 	}
@@ -31,17 +32,21 @@ func main() {
 		grpc.UnaryInterceptor(middleware.JWTUnaryInterceptor()),
 	)
 
-	usergrpc.RegisterUserServices(server, psql)
+	userGRPC.RegisterUserServices(server, psql)
+	reflection.Register(server) // enable reflection for grpcurl and other tools
 
-	reflection.Register(server)
-
-	address := config.GRPC.GRPC_HOST + ":" + config.GRPC.GRPC_PORT
+	address := cfg.GRPC.GRPC_HOST + ":" + cfg.GRPC.GRPC_PORT
 	lis, err := net.Listen("tcp", address)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	log.Printf("gRPC server running on %s", address)
+	fig := figure.NewFigure("USER SERVICE API", "small", true)
+	fig.Print()
+
+
+	fmt.Printf("\n📡 Listening on %s\n", address)
+
 	if err := server.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}

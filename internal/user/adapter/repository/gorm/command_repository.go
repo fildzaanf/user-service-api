@@ -1,10 +1,11 @@
 package gorm
 
 import (
+	"context"
 	"errors"
-	entity "user-service-api/internal/user/domain"
 	"user-service-api/internal/user/adapter/model"
 	"user-service-api/internal/user/application/port"
+	entity "user-service-api/internal/user/domain"
 	"user-service-api/pkg/constant"
 	"user-service-api/pkg/crypto"
 
@@ -21,7 +22,7 @@ func NewUserCommandRepository(db *gorm.DB) port.UserCommandRepositoryInterface {
 	}
 }
 
-func (ucr *userCommandRepository) RegisterUser(user entity.User) (entity.User, error) {
+func (ucr *userCommandRepository) RegisterUser(ctx context.Context, user entity.User) (entity.User, error) {
 	tx := ucr.db.Begin()
 	if tx.Error != nil {
 		return entity.User{}, tx.Error
@@ -43,7 +44,7 @@ func (ucr *userCommandRepository) RegisterUser(user entity.User) (entity.User, e
 	return userEntity, nil
 }
 
-func (ucr *userCommandRepository) LoginUser(email, password string) (entity.User, error) {
+func (ucr *userCommandRepository) LoginUser(ctx context.Context, email, password string) (entity.User, error) {
 	tx := ucr.db.Begin()
 
 	if tx.Error != nil {

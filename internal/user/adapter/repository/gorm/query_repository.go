@@ -1,6 +1,7 @@
 package gorm
 
 import (
+	"context"
 	"errors"
 	"user-service-api/internal/user/adapter/model"
 	"user-service-api/internal/user/application/port"
@@ -19,7 +20,7 @@ func NewUserQueryRepository(db *gorm.DB) port.UserQueryRepositoryInterface {
 	}
 }
 
-func (uqr *userQueryRepository) GetUserByID(id string) (entity.User, error) {
+func (uqr *userQueryRepository) GetUserByID(ctx context.Context, id string) (entity.User, error) {
 	var userModel model.User
 	result := uqr.db.Where("id = ?", id).First(&userModel)
 	if result.Error != nil {
@@ -34,7 +35,7 @@ func (uqr *userQueryRepository) GetUserByID(id string) (entity.User, error) {
 	return userDomain, nil
 }
 
-func (uqr *userQueryRepository) GetUserByEmail(email string) (entity.User, error) {
+func (uqr *userQueryRepository) GetUserByEmail(ctx context.Context, email string) (entity.User, error) {
 	var user entity.User
 	result := uqr.db.Where("email = ?", email).First(&user)
 	if result.Error != nil {

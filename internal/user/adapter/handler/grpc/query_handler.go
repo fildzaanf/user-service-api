@@ -26,7 +26,7 @@ func (uh *userQueryHandler) GetUserByID(ctx context.Context, userRequest *GetUse
 		return nil, status.Error(codes.InvalidArgument, "user id is required")
 	}
 
-	userID, role, errExtract := middleware.ExtractTokenFromContext(ctx)
+	userID, role, _, errExtract := middleware.ExtractTokenFromContext(ctx)
 	if errExtract != nil {
 		return nil, status.Error(codes.Unauthenticated, "unauthorized access")
 	}
@@ -39,7 +39,7 @@ func (uh *userQueryHandler) GetUserByID(ctx context.Context, userRequest *GetUse
 		return nil, status.Error(codes.PermissionDenied, "forbidden access")
 	}
 
-	user, err := uh.userQueryService.GetUserByID(userRequest.GetId())
+	user, err := uh.userQueryService.GetUserByID(ctx, userRequest.GetId())
 	if err != nil {
 		return nil, status.Error(codes.NotFound, "user not found")
 	}

@@ -1,9 +1,10 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"user-service-api/internal/user/application/port"
-	 entity "user-service-api/internal/user/domain"
+	entity "user-service-api/internal/user/domain"
 	"user-service-api/pkg/constant"
 	"user-service-api/pkg/crypto"
 	"user-service-api/pkg/middleware"
@@ -22,7 +23,7 @@ func NewUserCommandService(ucr port.UserCommandRepositoryInterface, uqr port.Use
 	}
 }
 
-func (ucs *userCommandService) RegisterUser(user entity.User) (entity.User, error) {
+func (ucs *userCommandService) RegisterUser(ctx context.Context, user entity.User) (entity.User, error) {
 
 	errEmpty := validator.IsDataEmpty(
 		[]string{"name", "email", "role", "password", "confirm_password"},
@@ -48,7 +49,7 @@ func (ucs *userCommandService) RegisterUser(user entity.User) (entity.User, erro
 		return entity.User{}, errLength
 	}
 
-	_, errGetEmail := ucs.userQueryRepository.GetUserByEmail(user.Email)
+	_, errGetEmail := ucs.userQueryRepository.GetUserByEmail(ctx, user.Email)
 	if errGetEmail == nil {
 		return entity.User{}, errors.New(constant.ERROR_EMAIL_EXIST)
 	}
@@ -64,7 +65,7 @@ func (ucs *userCommandService) RegisterUser(user entity.User) (entity.User, erro
 
 	user.Password = hashedPassword
 
-	userEntity, errRegister := ucs.userCommandRepository.RegisterUser(user)
+	userEntity, errRegister := ucs.userCommandRepository.RegisterUser(ctx, user)
 	if errRegister != nil {
 		return entity.User{}, errRegister
 	}
@@ -72,7 +73,7 @@ func (ucs *userCommandService) RegisterUser(user entity.User) (entity.User, erro
 	return userEntity, nil
 }
 
-func (ucs *userCommandService) LoginUser(email, password string) (entity.User, string, error) {
+func (ucs *userCommandService) LoginUser(ctx context.Context, email, password string) (entity.User, string, error) {
 	errEmpty := validator.IsDataEmpty([]string{"email", "password"}, email, password)
 	if errEmpty != nil {
 		return entity.User{}, "", errEmpty
@@ -83,7 +84,7 @@ func (ucs *userCommandService) LoginUser(email, password string) (entity.User, s
 		return entity.User{}, "", errEmailValid
 	}
 
-	userEntity, errGetEmail := ucs.userQueryRepository.GetUserByEmail(email)
+	userEntity, errGetEmail := ucs.userQueryRepository.GetUserByEmail(ctx, email)
 	if errGetEmail != nil {
 		return entity.User{}, "", errors.New(constant.ERROR_EMAIL_UNREGISTERED)
 	}

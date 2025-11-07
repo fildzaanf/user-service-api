@@ -17,10 +17,9 @@ func NewUserCommandHandler(ucs port.UserCommandServiceInterface) UserCommandServ
 }
 
 func (h *userCommandHandler) RegisterUser(ctx context.Context, userRequest *UserRegisterRequest) (*UserRegisterResponse, error) {
-
 	userEntity := UserRegisterRequestToEntity(userRequest)
 
-	registeredUser, err := h.userCommandService.RegisterUser(userEntity)
+	registeredUser, err := h.userCommandService.RegisterUser(ctx, userEntity)
 	if err != nil {
 		return nil, err
 	}
@@ -31,10 +30,9 @@ func (h *userCommandHandler) RegisterUser(ctx context.Context, userRequest *User
 }
 
 func (h *userCommandHandler) LoginUser(ctx context.Context, userRequest *UserLoginRequest) (*UserLoginResponse, error) {
-	
 	userEntity := UserLoginRequestToEntity(userRequest)
 
-	loginUser, token, err := h.userCommandService.LoginUser(userEntity.Email, userEntity.Password)
+	loginUser, token, err := h.userCommandService.LoginUser(ctx, userEntity.Email, userEntity.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -43,4 +41,3 @@ func (h *userCommandHandler) LoginUser(ctx context.Context, userRequest *UserLog
 
 	return userResponse, nil
 }
-
