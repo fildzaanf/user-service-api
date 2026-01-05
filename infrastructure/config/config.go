@@ -8,14 +8,14 @@ import (
 )
 
 type Configuration struct {
-	MYSQL        MySQLConfig
-	POSTGRESQL   PostgreSQLConfig
-	JWT          JWTConfig
-	SERVER       ServerConfig
-	CLOUDSTORAGE CloudStorageConfig
-	MIDTRANS     MidtransConfig
-	SMTP         SMTPConfig
-	GRPC         GRPCConfig
+	MYSQL          MySQLConfig
+	POSTGRESQL     PostgreSQLConfig
+	JWT            JWTConfig
+	CLOUDSTORAGE   CloudStorageConfig
+	MIDTRANS       MidtransConfig
+	SMTP           SMTPConfig
+	PRODUCTSERVICE ProductServiceConfig
+	USERSERVICE    UserServiceConfig
 }
 
 type (
@@ -33,11 +33,6 @@ type (
 		POSTGRESQL_HOST string
 		POSTGRESQL_PORT string
 		POSTGRESQL_NAME string
-	}
-
-	ServerConfig struct {
-		SERVER_HOST string
-		SERVER_PORT string
 	}
 
 	JWTConfig struct {
@@ -62,9 +57,17 @@ type (
 		SMTP_PORT string
 		SMTP_HOST string
 	}
-	GRPCConfig struct {
-		GRPC_HOST string
-		GRPC_PORT string
+	ProductServiceConfig struct {
+		PRODUCT_REST_HOST string
+		PRODUCT_REST_PORT string
+		PRODUCT_GRPC_HOST string
+		PRODUCT_GRPC_PORT string
+	}
+	UserServiceConfig struct {
+		USER_REST_HOST string
+		USER_REST_PORT string
+		USER_GRPC_HOST string
+		USER_GRPC_PORT string
 	}
 )
 
@@ -95,10 +98,6 @@ func LoadConfig() (*Configuration, error) {
 			POSTGRESQL_PORT: os.Getenv("POSTGRESQL_PORT"),
 			POSTGRESQL_NAME: os.Getenv("POSTGRESQL_NAME"),
 		},
-		SERVER: ServerConfig{
-			SERVER_HOST: os.Getenv("SERVER_HOST"),
-			SERVER_PORT: os.Getenv("SERVER_PORT"),
-		},
 		JWT: JWTConfig{
 			JWT_SECRET: os.Getenv("JWT_SECRET"),
 		},
@@ -118,9 +117,17 @@ func LoadConfig() (*Configuration, error) {
 			SMTP_PORT: os.Getenv("SMTP_PORT"),
 			SMTP_HOST: os.Getenv("SMTP_HOST"),
 		},
-		GRPC: GRPCConfig{
-			GRPC_HOST: os.Getenv("GRPC_HOST"),
-			GRPC_PORT: os.Getenv("GRPC_PORT"),
+		PRODUCTSERVICE: ProductServiceConfig{
+			PRODUCT_REST_HOST: os.Getenv("PRODUCT_REST_HOST"),
+			PRODUCT_REST_PORT: os.Getenv("PRODUCT_REST_PORT"),
+			PRODUCT_GRPC_HOST: os.Getenv("PRODUCT_GRPC_HOST"),
+			PRODUCT_GRPC_PORT: os.Getenv("PRODUCT_GRPC_PORT"),
+		},
+		USERSERVICE: UserServiceConfig{	
+			USER_REST_HOST: os.Getenv("USER_REST_HOST"),
+			USER_REST_PORT: os.Getenv("USER_REST_PORT"),
+			USER_GRPC_HOST: os.Getenv("USER_GRPC_HOST"),
+			USER_GRPC_PORT: os.Getenv("USER_GRPC_PORT"),
 		},
 	}, nil
 }

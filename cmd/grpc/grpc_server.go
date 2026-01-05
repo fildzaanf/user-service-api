@@ -35,7 +35,7 @@ func main() {
 	userGRPC.RegisterUserServices(server, psql)
 	reflection.Register(server) // enable reflection for grpcurl and other tools
 
-	address := cfg.GRPC.GRPC_HOST + ":" + cfg.GRPC.GRPC_PORT
+	address := cfg.USERSERVICE.USER_GRPC_HOST + ":" + cfg.USERSERVICE.USER_GRPC_PORT
 	lis, err := net.Listen("tcp", address)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
@@ -43,7 +43,6 @@ func main() {
 
 	fig := figure.NewFigure("USER SERVICE API", "small", true)
 	fig.Print()
-
 
 	fmt.Printf("\n📡 Listening on %s\n", address)
 

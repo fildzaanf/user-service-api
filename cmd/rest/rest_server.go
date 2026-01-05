@@ -47,8 +47,8 @@ func main() {
 
 	SetupRoutes(e, psql)
 
-	host := config.SERVER.SERVER_HOST
-	port := config.SERVER.SERVER_PORT
+	host := config.USERSERVICE.USER_REST_HOST
+	port := config.USERSERVICE.USER_REST_PORT
 	address := host + ":" + port
 
 	errChan := make(chan error, 1)
